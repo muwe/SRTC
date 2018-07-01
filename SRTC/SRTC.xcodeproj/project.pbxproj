@@ -1,0 +1,335 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A228BAF020E37C60003D8AAD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BAEF20E37C60003D8AAD /* main.cpp */; };
+		A228BAFD20E37F1D003D8AAD /* libdecoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A228BAF920E37F1C003D8AAD /* libdecoder.a */; };
+		A228BAFE20E37F1D003D8AAD /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A228BAFA20E37F1C003D8AAD /* libcommon.a */; };
+		A228BAFF20E37F1D003D8AAD /* libencoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A228BAFB20E37F1C003D8AAD /* libencoder.a */; };
+		A228BB0A20E38828003D8AAD /* libprocessing.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A228BB0920E38828003D8AAD /* libprocessing.a */; };
+		A228BB0D20E47B17003D8AAD /* h264_encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB0B20E47B17003D8AAD /* h264_encode.cpp */; };
+		A228BB1020E483D2003D8AAD /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB0E20E483D2003D8AAD /* base.cpp */; };
+		A228BB1320E4965D003D8AAD /* dump2file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB1120E4965D003D8AAD /* dump2file.cpp */; };
+		A228BB1620E4B9BF003D8AAD /* transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB1420E4B9BF003D8AAD /* transport.cpp */; };
+		A228BB3220E66DE1003D8AAD /* h264_rtp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB3020E66DE1003D8AAD /* h264_rtp.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A228BAEA20E37C60003D8AAD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A228BAEC20E37C60003D8AAD /* SRTC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SRTC; sourceTree = BUILT_PRODUCTS_DIR; };
+		A228BAEF20E37C60003D8AAD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A228BAF920E37F1C003D8AAD /* libdecoder.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdecoder.a; path = ../../openh264/libdecoder.a; sourceTree = "<group>"; };
+		A228BAFA20E37F1C003D8AAD /* libcommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcommon.a; path = ../../openh264/libcommon.a; sourceTree = "<group>"; };
+		A228BAFB20E37F1C003D8AAD /* libencoder.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libencoder.a; path = ../../openh264/libencoder.a; sourceTree = "<group>"; };
+		A228BB0920E38828003D8AAD /* libprocessing.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprocessing.a; path = ../../openh264/libprocessing.a; sourceTree = "<group>"; };
+		A228BB0B20E47B17003D8AAD /* h264_encode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h264_encode.cpp; sourceTree = "<group>"; };
+		A228BB0C20E47B17003D8AAD /* h264_encode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = h264_encode.hpp; sourceTree = "<group>"; };
+		A228BB0E20E483D2003D8AAD /* base.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base.cpp; sourceTree = "<group>"; };
+		A228BB0F20E483D2003D8AAD /* base.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = base.hpp; sourceTree = "<group>"; };
+		A228BB1120E4965D003D8AAD /* dump2file.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dump2file.cpp; sourceTree = "<group>"; };
+		A228BB1220E4965D003D8AAD /* dump2file.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dump2file.hpp; sourceTree = "<group>"; };
+		A228BB1420E4B9BF003D8AAD /* transport.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = transport.cpp; sourceTree = "<group>"; };
+		A228BB1520E4B9BF003D8AAD /* transport.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = transport.hpp; sourceTree = "<group>"; };
+		A228BB3020E66DE1003D8AAD /* h264_rtp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h264_rtp.cpp; sourceTree = "<group>"; };
+		A228BB3120E66DE1003D8AAD /* h264_rtp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = h264_rtp.hpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A228BAE920E37C60003D8AAD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A228BB0A20E38828003D8AAD /* libprocessing.a in Frameworks */,
+				A228BAFD20E37F1D003D8AAD /* libdecoder.a in Frameworks */,
+				A228BAFE20E37F1D003D8AAD /* libcommon.a in Frameworks */,
+				A228BAFF20E37F1D003D8AAD /* libencoder.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A228BAE320E37C60003D8AAD = {
+			isa = PBXGroup;
+			children = (
+				A228BAEE20E37C60003D8AAD /* SRTC */,
+				A228BAED20E37C60003D8AAD /* Products */,
+				A228BAF620E37EB2003D8AAD /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A228BAED20E37C60003D8AAD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A228BAEC20E37C60003D8AAD /* SRTC */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A228BAEE20E37C60003D8AAD /* SRTC */ = {
+			isa = PBXGroup;
+			children = (
+				A228BAEF20E37C60003D8AAD /* main.cpp */,
+				A228BB3020E66DE1003D8AAD /* h264_rtp.cpp */,
+				A228BB3120E66DE1003D8AAD /* h264_rtp.hpp */,
+				A228BB1420E4B9BF003D8AAD /* transport.cpp */,
+				A228BB1520E4B9BF003D8AAD /* transport.hpp */,
+				A228BB0B20E47B17003D8AAD /* h264_encode.cpp */,
+				A228BB0C20E47B17003D8AAD /* h264_encode.hpp */,
+				A228BB1120E4965D003D8AAD /* dump2file.cpp */,
+				A228BB1220E4965D003D8AAD /* dump2file.hpp */,
+				A228BB0E20E483D2003D8AAD /* base.cpp */,
+				A228BB0F20E483D2003D8AAD /* base.hpp */,
+			);
+			path = SRTC;
+			sourceTree = "<group>";
+		};
+		A228BAF620E37EB2003D8AAD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A228BB0920E38828003D8AAD /* libprocessing.a */,
+				A228BAFA20E37F1C003D8AAD /* libcommon.a */,
+				A228BAF920E37F1C003D8AAD /* libdecoder.a */,
+				A228BAFB20E37F1C003D8AAD /* libencoder.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A228BAEB20E37C60003D8AAD /* SRTC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A228BAF320E37C60003D8AAD /* Build configuration list for PBXNativeTarget "SRTC" */;
+			buildPhases = (
+				A228BAE820E37C60003D8AAD /* Sources */,
+				A228BAE920E37C60003D8AAD /* Frameworks */,
+				A228BAEA20E37C60003D8AAD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SRTC;
+			productName = SRTC;
+			productReference = A228BAEC20E37C60003D8AAD /* SRTC */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A228BAE420E37C60003D8AAD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0940;
+				ORGANIZATIONNAME = "Aiven's Mac";
+				TargetAttributes = {
+					A228BAEB20E37C60003D8AAD = {
+						CreatedOnToolsVersion = 9.4.1;
+					};
+				};
+			};
+			buildConfigurationList = A228BAE720E37C60003D8AAD /* Build configuration list for PBXProject "SRTC" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A228BAE320E37C60003D8AAD;
+			productRefGroup = A228BAED20E37C60003D8AAD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A228BAEB20E37C60003D8AAD /* SRTC */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A228BAE820E37C60003D8AAD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A228BAF020E37C60003D8AAD /* main.cpp in Sources */,
+				A228BB0D20E47B17003D8AAD /* h264_encode.cpp in Sources */,
+				A228BB1320E4965D003D8AAD /* dump2file.cpp in Sources */,
+				A228BB1620E4B9BF003D8AAD /* transport.cpp in Sources */,
+				A228BB3220E66DE1003D8AAD /* h264_rtp.cpp in Sources */,
+				A228BB1020E483D2003D8AAD /* base.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A228BAF120E37C60003D8AAD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A228BAF220E37C60003D8AAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		A228BAF420E37C60003D8AAD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8JW82U8D6W;
+				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/openh264;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A228BAF520E37C60003D8AAD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8JW82U8D6W;
+				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/openh264;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A228BAE720E37C60003D8AAD /* Build configuration list for PBXProject "SRTC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A228BAF120E37C60003D8AAD /* Debug */,
+				A228BAF220E37C60003D8AAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A228BAF320E37C60003D8AAD /* Build configuration list for PBXNativeTarget "SRTC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A228BAF420E37C60003D8AAD /* Debug */,
+				A228BAF520E37C60003D8AAD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A228BAE420E37C60003D8AAD /* Project object */;
+}
