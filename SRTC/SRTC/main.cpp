@@ -56,9 +56,9 @@ public:
     void OnDate(const unsigned char* data, int length) override
     {
         dump_file_->Write(data, length);
-        transport_->Send(data, length);
+//        transport_->Send(data, length);
         
-//        h264_rtp_->H264ToRtp(data, length);
+        h264_rtp_->H264ToRtp(data, length);
     }
 private:
     shared_ptr<DumpFile> dump_file_;

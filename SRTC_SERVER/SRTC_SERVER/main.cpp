@@ -44,7 +44,7 @@ private:
 int main(int argc , char *argv[])
 {
     //socket的建立
-    char inputBuffer[1024*10] = {};
+    char inputBuffer[BUFFER_LENGTH/2] = {0};
     char message[] = {"Hi,this is server.\n"};
     int sockfd = 0,forClientSockfd = 0;
     sockfd = socket(AF_INET , SOCK_STREAM , 0);
@@ -63,6 +63,9 @@ int main(int argc , char *argv[])
     serverInfo.sin_port = htons(SERVER_PORT);
     bind(sockfd,(struct sockaddr *)&serverInfo,sizeof(serverInfo));
     listen(sockfd,5);
+    
+    shared_ptr<H264RtpUnpacket> unpacket(new H264RtpUnpacket(new H264FrameReceiver()));
+    //        shared_ptr<DumpFile>    dump_file(new DumpFile(H264_FILE));
 
     while(true){
         forClientSockfd = accept(sockfd,(struct sockaddr*) &clientInfo, &addrlen);
@@ -70,12 +73,10 @@ int main(int argc , char *argv[])
         printf("Start receive forClientSockfd = %d\n",forClientSockfd);
         ssize_t size = 0;
         
-//        shared_ptr<H264RtpUnpacket> unpacket(new H264RtpUnpacket(new H264FrameReceiver()));
-        shared_ptr<DumpFile>    dump_file(new DumpFile(H264_FILE));
         while((size = recv(forClientSockfd,inputBuffer,sizeof(inputBuffer),0)) > 0){
             printf("Received Buffer Size is %ld\n", size);
-//            unpacket->RtpToH264((unsigned char*)inputBuffer, (int)size);
-            dump_file->Write((unsigned char*)inputBuffer, (int)size);
+            unpacket->ParseRtpPacket((unsigned char*)inputBuffer, (int)size);
+//            dump_file->Write((unsigned char*)inputBuffer, (int)size);
         }
         printf("Stop receive forClientSockfd = %d\n",forClientSockfd);
     }

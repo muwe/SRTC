@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #define H264                    96
+#define BUFFER_LENGTH 1024*4
 
 namespace SRTC {
     
@@ -68,35 +69,6 @@ namespace SRTC {
         char *buf;                    //! contains the first byte followed by the EBSP
         unsigned short lost_packets;  //! true, if packet loss is detected
     } NALU_t;
-
-    class RtpReveiver{
-    public:
-        virtual void OnRtpData(char* rtp, int length) = 0;
-    };
-    
-    class H264RtpPacket{
-    public:
-        H264RtpPacket(RtpReveiver* receiver);
-        virtual ~H264RtpPacket(){}
-        int H264ToRtp(const unsigned char* buffer, int length);
-    private:
-        NALU_t *AllocNALU(int buffersize);
-        void FreeNALU(NALU_t *n);
-        int GetAnnexbNALU (unsigned char* inPutBuffer, int length, NALU_t *nalu);
-        int FindStartCode2 (unsigned char *Buf);
-        int FindStartCode3 (unsigned char *Buf);
-        void dump(NALU_t *n);
-    private:
-        RtpReveiver* receiver_;
-        
-        RTP_FIXED_HEADER        *rtp_hdr;
-        NALU_HEADER        *nalu_hdr;
-        FU_INDICATOR    *fu_ind;
-        FU_HEADER        *fu_hdr;
-    };
-    
-    
-    
     
     class H264Receiver
     {
@@ -110,10 +82,15 @@ namespace SRTC {
         H264RtpUnpacket(H264Receiver* receiver);
         ~H264RtpUnpacket();
         int RtpToH264(const unsigned char* buffer, int length);
+        int FindStartCode4Byte (const unsigned char *Buf);
+        int FindRtpPacket(const unsigned char* buffer, int length, unsigned char** rtp_buffer, int* rtp_length);
+        int ParseRtpPacket(const unsigned char* buffer, int length);
     private:
         H264Receiver* receiver_;
-        unsigned char* h24_buffer_;
-        int buffer_len_;
+        unsigned char buffer_pool_[BUFFER_LENGTH];
+        int buffer_pool_length_;
+        unsigned char* h264_buffer_;
+        int h264_buffer_length_;
     };
 }
 

@@ -88,11 +88,8 @@ namespace SRTC {
         void dump(NALU_t *n);
     private:
         RtpReveiver* receiver_;
-        
-        RTP_FIXED_HEADER        *rtp_hdr;
-        NALU_HEADER        *nalu_hdr;
-        FU_INDICATOR    *fu_ind;
-        FU_HEADER        *fu_hdr;
+        unsigned short seq_num_;
+
     };
     
     
