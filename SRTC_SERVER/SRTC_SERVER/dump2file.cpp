@@ -32,6 +32,7 @@ int DumpFile::Write(const unsigned char* pData, int length)
     
     if(file_handle_){
         size = fwrite(pData, 1, length, file_handle_);
+        fflush(file_handle_);
     }
     
     return (int)size;

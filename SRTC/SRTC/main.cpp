@@ -7,10 +7,10 @@
 //
 
 #include <iostream>
-#include "h264_encode.hpp"
 #include "dump2file.hpp"
-#include "transport.hpp"
-#include "h264_rtp.hpp"
+#include "transport/transport.hpp"
+#include "rtp_rtcp/h264_rtp_packet.hpp"
+#include "codec/h264_encode.hpp"
 
 #define YUV_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/foreman_320x240.yuv"
 #define H264_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/video.h264"

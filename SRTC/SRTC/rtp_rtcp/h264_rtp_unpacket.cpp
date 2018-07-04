@@ -1,13 +1,14 @@
 //
-//  h264_rtp.cpp
+//  h264_rtp_unpacket.cpp
 //  SRTC
 //
-//  Created by Aiven's Mac on 2018/6/29.
+//  Created by Aiven's Mac on 2018/7/4.
 //  Copyright © 2018年 Aiven's Mac. All rights reserved.
 //
 
-#include "h264_rtp.hpp"
-#include <stdlib.h>
+#include "h264_rtp_unpacket.hpp"
+
+
 #include <string.h>
 #include <assert.h>
 #include <memory.h>
@@ -18,7 +19,7 @@ using namespace SRTC;
 H264RtpUnpacket::H264RtpUnpacket(H264Receiver* receiver)
 {
     receiver_ = receiver;
-
+    
     memset(buffer_pool_, 0x0, BUFFER_LENGTH);
     buffer_pool_length_ = 0;
     
@@ -50,7 +51,7 @@ int H264RtpUnpacket::FindRtpPacket(const unsigned char* buffer, int length, unsi
     
     int pos = 0;
     
-//    unsigned char *Buf = buffer;
+    //    unsigned char *Buf = buffer;
     int startcodeprefix_len = 4;
     //判断是否为0x000001
     if(FindStartCode4Byte (buffer) != 1){
@@ -86,7 +87,7 @@ int H264RtpUnpacket::FindRtpPacket(const unsigned char* buffer, int length, unsi
 int H264RtpUnpacket::ParseRtpPacket(const unsigned char* buffer, int length)
 {
     printf("ParseRtpPacket Start::length=%d, buffer_pool_length_=%d\n",length, buffer_pool_length_);
-
+    
     if(length + buffer_pool_length_ <= BUFFER_LENGTH ){
         memcpy(&buffer_pool_[buffer_pool_length_], buffer, length);
         buffer_pool_length_ += length;
@@ -104,12 +105,12 @@ int H264RtpUnpacket::ParseRtpPacket(const unsigned char* buffer, int length)
         
         packetbyte = FindRtpPacket(&buffer_pool_[processed_buffer_len], buffer_pool_length_-processed_buffer_len, &rtp_buffer, &rtp_len);
         
-
+        
         if(rtp_len && rtp_buffer){
             // 发现RTP包，解析
             RtpToH264(rtp_buffer, rtp_len);
             processed_buffer_len += packetbyte;
-
+            
         }else if(packetbyte){
             //没有完整数据，退出循环
             break;
@@ -125,10 +126,10 @@ int H264RtpUnpacket::ParseRtpPacket(const unsigned char* buffer, int length)
         memcpy(&buffer_pool_[0], &buffer_pool_[processed_buffer_len], buffer_pool_length_ - processed_buffer_len);
         buffer_pool_length_ = buffer_pool_length_ - processed_buffer_len;
     }
-
+    
     printf("ParseRtpPacket End::processed_buffer_len=%d, buffer_pool_length_=%d\n",processed_buffer_len, buffer_pool_length_);
-
-
+    
+    
     return 0;
 }
 
@@ -144,17 +145,17 @@ int H264RtpUnpacket::RtpToH264(const unsigned char* buffer, int length)
     }
     
     int pos = 0;
-
+    
     // Parse RTP Header  12 byte
     RTP_FIXED_HEADER*  rtp_hdr =(RTP_FIXED_HEADER*)&buffer[0];
     
     printf("RtpToH264::rtp_hdr->version=%d, length=%d, seq_no=%d\n", rtp_hdr->version, length, ntohs(rtp_hdr->seq_no));
-
-    if(rtp_hdr->version == 1){
     
+    if(rtp_hdr->version == 1){
+        
         // Singl
         memset(h264_buffer_, 0x0, h264_buffer_length_);
-
+        
         // Create the H264 SYS Header   3 byte
         h264_buffer_[0] = 0;
         h264_buffer_[1] = 0;
@@ -180,13 +181,13 @@ int H264RtpUnpacket::RtpToH264(const unsigned char* buffer, int length)
         
         // FU-A
         memset(h264_buffer_, 0x0, buffer_pool_length_);
-
+        
         FU_INDICATOR* fu_ind =(FU_INDICATOR*)&buffer[12]; //将sendbuf[12]的地址赋给fu_ind，之后对fu_ind的写入就将写入sendbuf中；
         assert(fu_ind->TYPE == 28);
         
         //设置FU HEADER,并将这个HEADER填入sendbuf[13]
         FU_HEADER* fu_hdr =(FU_HEADER*)&buffer[13];
-
+        
         if(fu_hdr->S == 1){
             // 1：Create the H264 SYS Header   3 byte
             h264_buffer_[0] = 0;
@@ -194,7 +195,7 @@ int H264RtpUnpacket::RtpToH264(const unsigned char* buffer, int length)
             h264_buffer_[2] = 0;
             h264_buffer_[3] = 1;
             pos += 4;
-
+            
             // 2：Create Nalu Header           1 byte
             NALU_HEADER* nalu_hdr =(NALU_HEADER*)&h264_buffer_[4]; //将sendbuf[12]的地址赋给nalu_hdr，之后对nalu_hdr的写入就将写入sendbuf中；
             nalu_hdr->F = fu_ind->F;
@@ -202,7 +203,7 @@ int H264RtpUnpacket::RtpToH264(const unsigned char* buffer, int length)
             nalu_hdr->TYPE = fu_hdr->TYPE;
             printf("nalu_hdr->F=%d, nalu_hdr->NRI=%d, nalu_hdr->TYPE=%d\n", nalu_hdr->F, nalu_hdr->NRI, nalu_hdr->TYPE);
             pos += 1;
-
+            
         }else if(fu_hdr->E == 1){
             
         }else{
@@ -212,17 +213,15 @@ int H264RtpUnpacket::RtpToH264(const unsigned char* buffer, int length)
         // 3：Append the raw data
         memcpy(&h264_buffer_[pos], &buffer[14], length - 14);
         pos += length - 14;
-
+        
         if(receiver_){
             receiver_->OnH264RawData(h264_buffer_, pos);
         }
-
+        
     }else{
         assert(0);
     }
-        
+    
     return 0;
 }
-
-
 

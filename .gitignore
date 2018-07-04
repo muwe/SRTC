@@ -6,3 +6,5 @@
 *.rtp
 *.rtcp
 *.aac
+*.so
+*.a

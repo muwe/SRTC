@@ -1,13 +1,12 @@
 //
-//  h264_rtp.cpp
+//  h264_rtp_packet.cpp
 //  SRTC
 //
-//  Created by Aiven's Mac on 2018/6/29.
+//  Created by Aiven's Mac on 2018/7/4.
 //  Copyright © 2018年 Aiven's Mac. All rights reserved.
 //
 
-#include "h264_rtp.hpp"
-#include <stdlib.h>
+#include "h264_rtp_packet.hpp"
 #include<string.h>
 #include <assert.h>
 
@@ -28,7 +27,7 @@ int H264RtpPacket::H264ToRtp(const unsigned char* buffer, int length)
     NALU_HEADER        *nalu_hdr;
     FU_INDICATOR    *fu_ind;
     FU_HEADER        *fu_hdr;
-
+    
     
     char* nalu_payload;
     char sendbuf[1500];
@@ -57,7 +56,7 @@ int H264RtpPacket::H264ToRtp(const unsigned char* buffer, int length)
         // 增加同步字节 00 00 00 01
         int pos = 0;
         int head_length = 4;
-
+        
         sendbuf[0] = 'C';
         sendbuf[1] = 'D';
         sendbuf[2] = 'E';
@@ -82,7 +81,7 @@ int H264RtpPacket::H264ToRtp(const unsigned char* buffer, int length)
             
             ts_current = ts_current + timestamp_increse;
             rtp_hdr->timestamp=htonl(ts_current);
-
+            
             //设置NALU HEADER,并将这个HEADER填入sendbuf[12]
             pos = 12+head_length;
             nalu_hdr =(NALU_HEADER*)&sendbuf[pos]; //将sendbuf[12]的地址赋给nalu_hdr，之后对nalu_hdr的写入就将写入sendbuf中；
@@ -96,7 +95,7 @@ int H264RtpPacket::H264ToRtp(const unsigned char* buffer, int length)
             bytes=n->len + pos ;    //获得sendbuf的长度,为nalu的长度（包含NALU头但除去起始前缀）加上rtp_header的固定长度12字节
             receiver_->OnRtpData(sendbuf, bytes);//发送rtp包
             printf("Send RTP Signal::nalu_hdr->TYPE=%d, length=%d,seq_no=%d\n", nalu_hdr->TYPE, bytes, ntohs(rtp_hdr->seq_no));
-
+            
             //    Sleep(100);
             
         }
@@ -111,7 +110,7 @@ int H264RtpPacket::H264ToRtp(const unsigned char* buffer, int length)
             rtp_hdr->timestamp = htonl(ts_current);
             
             rtp_hdr->version     = 2;  //如果FU - A
-
+            
             while(t <= k)
             {
                 rtp_hdr->seq_no = htons(seq_num_++); //序列号，每发送一个RTP包增1
@@ -143,7 +142,7 @@ int H264RtpPacket::H264ToRtp(const unsigned char* buffer, int length)
                     receiver_->OnRtpData(sendbuf, bytes);//发送rtp包
                     printf("Send RTP Fu_A::fu_hdr->S=%d, fu_hdr->R=%d, fu_hdr->E=%d,nalu_hdr->TYPE=%d,length=%d,seq_no=%d\n",
                            fu_hdr->S, fu_hdr->R, fu_hdr->E, fu_hdr->TYPE, bytes, ntohs(rtp_hdr->seq_no));
-
+                    
                     t++;
                     
                 }
@@ -355,82 +354,3 @@ int H264RtpPacket::FindStartCode3 (unsigned char *Buf)
     if(Buf[0]!=0 || Buf[1]!=0 || Buf[2] !=0 || Buf[3] !=1) return 0;//判断是否为0x00000001,如果是返回1
     else return 1;
 }
-
-
-
-H264RtpUnpacket::H264RtpUnpacket(H264Receiver* receiver)
-{
-    receiver_ = receiver;
-}
-
-int H264RtpUnpacket::RtpToH264(const unsigned char* buffer, int length)
-{
-    // Parse RTP Header  12 byte
-    RTP_FIXED_HEADER*  rtp_hdr =(RTP_FIXED_HEADER*)&buffer[0];
-    
-    if(buffer_len_ < length){
-        buffer_len_ = length + 100;
-        h24_buffer_ = (unsigned char*)calloc(buffer_len_, sizeof(char));
-    }
-    
-    if(rtp_hdr->version == 1){
-    
-        // Singl
-        memset(h24_buffer_, 0x0, buffer_len_);
-
-        // Create the H264 SYS Header   3 byte
-        h24_buffer_[0] = 0;
-        h24_buffer_[1] = 0;
-        h24_buffer_[2] = 1;
-
-        // Create Nalu Header           1 byte
-        NALU_HEADER* nalu_hdr =(NALU_HEADER*)&buffer[3]; //将sendbuf[12]的地址赋给nalu_hdr，之后对nalu_hdr的写入就将写入sendbuf中；
-        printf("nalu_hdr->F=%d, nalu_hdr->NRI=%d, nalu_hdr->TYPE=%d\n", nalu_hdr->F, nalu_hdr->NRI, nalu_hdr->TYPE);
-        h24_buffer_[3] = buffer[3];
-        
-        // Append the raw data
-        memcpy(&h24_buffer_[4], &buffer[13], length - 13);
-
-        if(receiver_){
-            receiver_->OnH264RawData(h24_buffer_, length - 13);
-        }
-        
-    }else if(rtp_hdr->version == 2){
-        
-        // FU-A
-        memset(h24_buffer_, 0x0, buffer_len_);
-
-        // 1：Create the H264 SYS Header   3 byte
-        h24_buffer_[0] = 0;
-        h24_buffer_[1] = 0;
-        h24_buffer_[2] = 1;
-
-        
-        FU_INDICATOR* fu_ind =(FU_INDICATOR*)&buffer[12]; //将sendbuf[12]的地址赋给fu_ind，之后对fu_ind的写入就将写入sendbuf中；
-        assert(fu_ind->TYPE == 28);
-        
-        //设置FU HEADER,并将这个HEADER填入sendbuf[13]
-        FU_HEADER* fu_hdr =(FU_HEADER*)&buffer[13];
-        
-        // 2：Create Nalu Header           1 byte
-        NALU_HEADER* nalu_hdr =(NALU_HEADER*)&h24_buffer_[3]; //将sendbuf[12]的地址赋给nalu_hdr，之后对nalu_hdr的写入就将写入sendbuf中；
-        nalu_hdr->F = fu_ind->F;
-        nalu_hdr->NRI = fu_ind->NRI;
-        nalu_hdr->TYPE = fu_hdr->TYPE;
-        
-        // 3：Append the raw data
-        memcpy(&h24_buffer_[4], &buffer[14], length - 14);
-        
-        if(receiver_){
-            receiver_->OnH264RawData(h24_buffer_, length - 14);
-        }
-
-    }else{
-        assert(0);
-    }
-        
-    return 0;
-}
-
-
-
