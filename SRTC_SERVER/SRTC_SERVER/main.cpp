@@ -15,9 +15,10 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "dump2file.hpp"
-#include "../../SRTC/SRTC/rtp_rtcp/h264_rtp_unpacket.hpp"
+#include "../../SRTC/SRTC//rtp_rtcp/h264_rtp_packet.hpp"
+#include "../../SRTC/SRTC/rtp_rtcp/h264_rtp_helper.hpp"
 
-#define SERVER_PORT 8060
+#define SERVER_PORT 8070
 #define SERVER_ADDRESS "127.0.0.1"
 
 #define H264_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/server_video.h264"
@@ -33,7 +34,7 @@ public:
         data_dump_.reset(new DumpFile(H264_FILE));
     }
     
-    void OnH264RawData(unsigned char* h264, int length) override
+    void OnH264Frame(unsigned char* h264, int length) override
     {
         data_dump_->Write((const unsigned char*)h264, (int)length);
     }
@@ -64,8 +65,10 @@ int main(int argc , char *argv[])
     bind(sockfd,(struct sockaddr *)&serverInfo,sizeof(serverInfo));
     listen(sockfd,5);
     
-    shared_ptr<H264RtpUnpacket> unpacket(new H264RtpUnpacket(new H264FrameReceiver()));
-    //        shared_ptr<DumpFile>    dump_file(new DumpFile(H264_FILE));
+    shared_ptr<H264FrameReceiver> h264_frame_receiver(new H264FrameReceiver());
+    shared_ptr<H264RtpPacket> h264_packet(new H264RtpPacket(nullptr, h264_frame_receiver.get()));
+    shared_ptr<H264RtpHelper> h264_rtp_helper(new H264RtpHelper(h264_packet.get()));
+//            shared_ptr<DumpFile>    dump_file(new DumpFile(H264_FILE));
 
     while(true){
         forClientSockfd = accept(sockfd,(struct sockaddr*) &clientInfo, &addrlen);
@@ -75,7 +78,7 @@ int main(int argc , char *argv[])
         
         while((size = recv(forClientSockfd,inputBuffer,sizeof(inputBuffer),0)) > 0){
             printf("Received Buffer Size is %ld\n", size);
-            unpacket->ParseRtpPacket((unsigned char*)inputBuffer, (int)size);
+            h264_rtp_helper->ParseRtpPacket((unsigned char*)inputBuffer, (int)size);
 //            dump_file->Write((unsigned char*)inputBuffer, (int)size);
         }
         printf("Stop receive forClientSockfd = %d\n",forClientSockfd);

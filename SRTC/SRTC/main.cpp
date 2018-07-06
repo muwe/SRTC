@@ -16,8 +16,11 @@
 #define H264_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/video.h264"
 #define RTP_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/video.rtp"
 
+
+#include "rtprtcp/inc/rtp_all.h"
+
 #define SERVER_ADDRESS "127.0.0.1"
-#define SERVER_PORT 8060
+#define SERVER_PORT 8070
 
 using namespace SRTC;
 
@@ -31,7 +34,7 @@ public:
         
         transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
     }
-    void OnRtpData(char* rtp, int length) override
+    void OnRtpPacket(char* rtp, int length) override
     {
         dump_file_->Write((const unsigned char*)rtp, length);
         transport_->Send((const unsigned char*)rtp, length);
@@ -47,10 +50,11 @@ public:
     H264Dump(string outPutFile)
     {
         dump_file_.reset(new DumpFile(outPutFile));
-        transport_.reset(new Transport());
-        h264_rtp_.reset(new H264RtpPacket(new RtpDump(RTP_FILE)));
+//        transport_.reset(new Transport());
+        rtp_dump_.reset(new RtpDump(RTP_FILE));
+        h264_rtp_.reset(new H264RtpPacket(rtp_dump_.get(), nullptr));
         
-        transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
+//        transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
     }
     
     void OnDate(const unsigned char* data, int length) override
@@ -58,12 +62,13 @@ public:
         dump_file_->Write(data, length);
 //        transport_->Send(data, length);
         
-        h264_rtp_->H264ToRtp(data, length);
+        h264_rtp_->ReceiveH264Packet(data, length);
     }
 private:
     shared_ptr<DumpFile> dump_file_;
-    shared_ptr<Transport> transport_;
+//    shared_ptr<Transport> transport_;
     shared_ptr<H264RtpPacket> h264_rtp_;
+    shared_ptr<RtpDump> rtp_dump_;
     
 };
 

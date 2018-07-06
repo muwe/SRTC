@@ -16,25 +16,40 @@ namespace SRTC {
     
     class RtpReveiver{
     public:
-        virtual void OnRtpData(char* rtp, int length) = 0;
+        virtual void OnRtpPacket(char* rtp, int length) = 0;
     };
     
+    class H264Receiver
+    {
+    public:
+        virtual void OnH264Frame(unsigned char* h264data, int length) = 0;
+    };
+
     class H264RtpPacket{
     public:
-        H264RtpPacket(RtpReveiver* receiver);
-        virtual ~H264RtpPacket(){}
-        int H264ToRtp(const unsigned char* buffer, int length);
+        H264RtpPacket(RtpReveiver* rtp_receiver, H264Receiver* h264_receiver);
+        virtual ~H264RtpPacket();
+        
+        int ReceiveH264Packet(const unsigned char* buffer, int length);
+        int ReceiveRtpPacket(const unsigned char* buffer, int length);
+
     private:
+        // h264 to rtp
         NALU_t *AllocNALU(int buffersize);
         void FreeNALU(NALU_t *n);
         int GetAnnexbNALU (unsigned char* inPutBuffer, int length, NALU_t *nalu);
         int FindStartCode2 (unsigned char *Buf);
         int FindStartCode3 (unsigned char *Buf);
         void dump(NALU_t *n);
-    private:
-        RtpReveiver* receiver_;
-        unsigned short seq_num_;
         
+    private:
+        RtpReveiver* rtp_receiver_;
+        unsigned short rtp_seq_num_;
+        
+        H264Receiver* h264_receiver_;
+        unsigned char* h264_buffer_;
+        int h264_buffer_length_;
+
     };
 }
 

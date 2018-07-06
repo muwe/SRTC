@@ -64,7 +64,7 @@ int Transport::Send(const unsigned char* data, int length)
     
     if(sockfd_){
         size = send(sockfd_,data,length,0);
-        printf("Send::size=%d\n", size);
+        printf("Send::size=%ld\n", size);
     }
     return 0;
 }

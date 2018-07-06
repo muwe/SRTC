@@ -12,6 +12,9 @@
 
 #define H264  96
 
+
+// Here we only support little endian
+
 namespace SRTC {
     
     typedef struct
@@ -67,6 +70,72 @@ namespace SRTC {
         char *buf;                    //! contains the first byte followed by the EBSP
         unsigned short lost_packets;  //! true, if packet loss is detected
     } NALU_t;
+
+    
+    // Following code is for RTCP
+    
+    struct RTCP_COMMON_HEADER
+    {
+        int count:5;       /* varies by packet type */
+        int pad:1;         /* padding flag */
+        int ver:2;         /* protocol version */
+        
+        int pt:8;          /* RTCP packet type */
+        int length:16;     /* pkt len in words, w/o this word */
+    };
+    
+    struct RTCP_RR{
+        unsigned char type;              /* type of item (rtcp_sdes_type_t) */
+        unsigned char length;            /* length of item (in octets) */
+        char data[1];             /* text, not null-terminated */
+    };
+    
+    struct RTCP_SDES_ITEM
+    {
+        unsigned char type;              /* type of item (rtcp_sdes_type_t) */
+        unsigned char length;            /* length of item (in octets) */
+        char data[1];             /* text, not null-terminated */
+    };
+    
+    struct RTCP_FIX_HEADER
+    {
+        RTCP_COMMON_HEADER common;     /* common header */
+        union
+        {
+            /* sender report (SR) */
+            struct rtcp_sr
+            {
+                int ssrc;     /* sender generating this report */
+                int ntp_sec;  /* NTP timestamp */
+                int ntp_frac;
+                int rtp_ts;   /* RTP timestamp */
+                int psent;    /* packets sent */
+                int osent;    /* octets sent */
+                RTCP_RR rr[1];    /* variable-length list */
+            } sr;
+            
+            /* reception report (RR) */
+            struct rtcp_rr
+            {
+                int ssrc;     /* receiver generating this report */
+                RTCP_RR rr[1];    /* variable-length list */
+            } rr;
+            
+            /* source description (SDES) */
+            struct rtcp_sdes
+            {
+                int ssrc;      /* first SSRC/CSRC */
+                RTCP_SDES_ITEM item[1]; /* list of SDES items */
+            } sdes;
+            
+            /* BYE */
+            struct
+            {
+                int ssrc[1];   /* list of sources */
+                /* can't express trailing text for reason */
+            } bye;
+        } body;
+    };
 
 }
 
