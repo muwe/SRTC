@@ -12,6 +12,8 @@
 
 #define H264  96
 
+#define RTP_VERSION    2
+
 
 // Here we only support little endian
 
@@ -72,7 +74,18 @@ namespace SRTC {
     } NALU_t;
 
     
+    
     // Following code is for RTCP
+    
+    enum RTCP_TYEP
+    {
+        RTCP_TYPE_SR   = 200,
+        RTCP_TYPE_RR   = 201,
+        RTCP_TYPE_SDES = 202,
+        RTCP_TYPE_BYE  = 203,
+        RTCP_TYPE_APP  = 204
+    } ;
+
     
     struct RTCP_COMMON_HEADER
     {
@@ -97,7 +110,7 @@ namespace SRTC {
         char data[1];             /* text, not null-terminated */
     };
     
-    struct RTCP_FIX_HEADER
+    struct RTCP_PACKET
     {
         RTCP_COMMON_HEADER common;     /* common header */
         union
@@ -137,6 +150,7 @@ namespace SRTC {
         } body;
     };
 
+    
 }
 
 

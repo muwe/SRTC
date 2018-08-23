@@ -13,7 +13,7 @@
 using namespace SRTC;
 
 
-H264RtpPacket::H264RtpPacket(RtpReveiver* rtp_receiver, H264Receiver* h264_receiver)
+H264RtpPacket::H264RtpPacket(RtpReveiver* rtp_receiver, H264Receiver* h264_receiver, RtpSession* rtp_session)
 {
     rtp_receiver_ = rtp_receiver;
     rtp_seq_num_ = 0;

@@ -11,13 +11,11 @@
 #include "transport/transport.hpp"
 #include "rtp_rtcp/h264_rtp_packet.hpp"
 #include "codec/h264_encode.hpp"
+#include "base/srtc_log.hpp"
 
 #define YUV_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/foreman_320x240.yuv"
 #define H264_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/video.h264"
 #define RTP_FILE "/Users/aivensmac/work/study/SRTC/SRTC/resource/video.rtp"
-
-
-#include "rtprtcp/inc/rtp_all.h"
 
 #define SERVER_ADDRESS "127.0.0.1"
 #define SERVER_PORT 8070
@@ -52,7 +50,9 @@ public:
         dump_file_.reset(new DumpFile(outPutFile));
 //        transport_.reset(new Transport());
         rtp_dump_.reset(new RtpDump(RTP_FILE));
-        h264_rtp_.reset(new H264RtpPacket(rtp_dump_.get(), nullptr));
+        rtp_session_.reset(new RtpSession());
+        
+        h264_rtp_.reset(new H264RtpPacket(rtp_dump_.get(), nullptr, rtp_session_.get()));
         
 //        transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
     }
@@ -69,16 +69,19 @@ private:
 //    shared_ptr<Transport> transport_;
     shared_ptr<H264RtpPacket> h264_rtp_;
     shared_ptr<RtpDump> rtp_dump_;
-    
+    shared_ptr<RtpSession> rtp_session_;
+
 };
 
 int main(int argc, const char * argv[]) {
     
     shared_ptr<H264Dump> h264_dump_(new H264Dump(H264_FILE));
     shared_ptr<H264Encoder> h264_encoder_(new H264Encoder(YUV_FILE, h264_dump_.get()));
-
-    h264_encoder_->Encode();
     
+    SRTC_INFO_LOG("start");
+    h264_encoder_->Encode();
+    SRTC_INFO_LOG("end");
+
     return 0;
 }
 

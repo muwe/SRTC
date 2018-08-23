@@ -11,7 +11,7 @@
 
 #include <string>
 #include <stdio.h>
-#include "/Users/aivensmac/work/study/openh264/codec/api/svc/codec_api.h"
+#include "/Users/aivensmac/work/study/thirdparty/openh264/codec/api/svc/codec_api.h"
 
 using namespace std;
 

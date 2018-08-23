@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "h264_rtp.h"
+#include "rtp_session.hpp"
 
 namespace SRTC {
     
@@ -27,7 +28,7 @@ namespace SRTC {
 
     class H264RtpPacket{
     public:
-        H264RtpPacket(RtpReveiver* rtp_receiver, H264Receiver* h264_receiver);
+        H264RtpPacket(RtpReveiver* rtp_receiver, H264Receiver* h264_receiver, RtpSession* rtp_session);
         virtual ~H264RtpPacket();
         
         int ReceiveH264Packet(const unsigned char* buffer, int length);
@@ -50,6 +51,7 @@ namespace SRTC {
         unsigned char* h264_buffer_;
         int h264_buffer_length_;
 
+        RtpSession* rtp_session_{nullptr};
     };
 }
 
