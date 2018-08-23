@@ -157,13 +157,17 @@ int H264RtpPacket::ReceiveH264Packet(const unsigned char* buffer, int length)
         
         // 增加同步字节 00 00 00 01
         int pos = 0;
-        int head_length = 4;
+        int head_length = 0;
         
+#ifdef TCP_SYNC_HEADER
+        head_length = 4;
+
         sendbuf[0] = 'C';
         sendbuf[1] = 'D';
         sendbuf[2] = 'E';
         sendbuf[3] = 'F';
         pos = head_length;
+#endif
         
         rtp_hdr =(RTP_FIXED_HEADER*)&sendbuf[pos];
         //设置RTP HEADER，

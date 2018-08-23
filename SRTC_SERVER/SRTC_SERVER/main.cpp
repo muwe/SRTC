@@ -13,10 +13,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+
 #include <arpa/inet.h>
 #include "dump2file.hpp"
 #include "../../SRTC/SRTC//rtp_rtcp/h264_rtp_packet.hpp"
 #include "../../SRTC/SRTC/rtp_rtcp/h264_rtp_helper.hpp"
+#include "../../SRTC/SRTC/base/srtc_log.hpp"
 
 #define SERVER_PORT 8070
 #define SERVER_ADDRESS "127.0.0.1"
@@ -48,8 +50,9 @@ int main(int argc , char *argv[])
     char inputBuffer[BUFFER_LENGTH/2] = {0};
     char message[] = {"Hi,this is server.\n"};
     int sockfd = 0,forClientSockfd = 0;
-    sockfd = socket(AF_INET , SOCK_STREAM , 0);
-    
+//    sockfd = socket(AF_INET , SOCK_STREAM , 0);
+    sockfd = socket(AF_INET , SOCK_DGRAM , 0);
+
     if (sockfd == -1){
         printf("Fail to create a socket.\n");
     }
@@ -66,10 +69,11 @@ int main(int argc , char *argv[])
     listen(sockfd,5);
     
     shared_ptr<H264FrameReceiver> h264_frame_receiver(new H264FrameReceiver());
-    shared_ptr<H264RtpPacket> h264_packet(new H264RtpPacket(nullptr, h264_frame_receiver.get()));
+    shared_ptr<H264RtpPacket> h264_packet(new H264RtpPacket(nullptr, h264_frame_receiver.get(), nullptr));
     shared_ptr<H264RtpHelper> h264_rtp_helper(new H264RtpHelper(h264_packet.get()));
 //            shared_ptr<DumpFile>    dump_file(new DumpFile(H264_FILE));
 
+#if 0
     while(true){
         forClientSockfd = accept(sockfd,(struct sockaddr*) &clientInfo, &addrlen);
 
@@ -83,5 +87,23 @@ int main(int argc , char *argv[])
         }
         printf("Stop receive forClientSockfd = %d\n",forClientSockfd);
     }
+#else
+
+    while(true){
+        ssize_t size = 0;
+
+        //recvfrom是拥塞函数，没有数据就一直拥塞
+        size  = recvfrom(sockfd, inputBuffer, BUFFER_LENGTH/2, 0, (struct sockaddr*)&clientInfo, &addrlen);
+        
+        if(size > 0){
+            SRTC_INFO_LOG("Received Buffer Size is %ld\n", size);
+//            h264_rtp_helper->ParseRtpPacket((unsigned char*)inputBuffer, (int)size);
+            h264_packet->ReceiveRtpPacket((unsigned char*)inputBuffer, (int)size);
+        }
+    }
+
+#endif
+    
+    
     return 0;
 }

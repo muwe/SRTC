@@ -9,9 +9,13 @@
 /* Begin PBXBuildFile section */
 		A228BB2420E4C94A003D8AAD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB2320E4C94A003D8AAD /* main.cpp */; };
 		A228BB2C20E4E14B003D8AAD /* dump2file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A228BB2A20E4E14A003D8AAD /* dump2file.cpp */; };
-		A262AA9320EF931200FC1C99 /* h264_rtp_packet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA8D20EF931200FC1C99 /* h264_rtp_packet.cpp */; };
-		A262AA9420EF931200FC1C99 /* h264_rtp_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA8E20EF931200FC1C99 /* h264_rtp_helper.cpp */; };
-		A262AA9520EF931200FC1C99 /* rtcp_packet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA9120EF931200FC1C99 /* rtcp_packet.cpp */; };
+		A2DAE533212E933200784D7F /* rtp_session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE52B212E933200784D7F /* rtp_session.cpp */; };
+		A2DAE534212E933200784D7F /* h264_rtp_packet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE52C212E933200784D7F /* h264_rtp_packet.cpp */; };
+		A2DAE535212E933200784D7F /* h264_rtp_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE52D212E933200784D7F /* h264_rtp_helper.cpp */; };
+		A2DAE536212E933200784D7F /* rtcp_packet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE530212E933200784D7F /* rtcp_packet.cpp */; };
+		A2DAE540212E934300784D7F /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE53C212E934300784D7F /* base.cpp */; };
+		A2DAE541212E934300784D7F /* srtc_log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE53E212E934300784D7F /* srtc_log.cpp */; };
+		A2DAE545212E934C00784D7F /* transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DAE543212E934C00784D7F /* transport.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,13 +35,21 @@
 		A228BB2320E4C94A003D8AAD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A228BB2A20E4E14A003D8AAD /* dump2file.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dump2file.cpp; sourceTree = "<group>"; };
 		A228BB2B20E4E14B003D8AAD /* dump2file.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dump2file.hpp; sourceTree = "<group>"; };
-		A262AA8C20EF931200FC1C99 /* rtcp_packet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rtcp_packet.hpp; sourceTree = "<group>"; };
-		A262AA8D20EF931200FC1C99 /* h264_rtp_packet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_rtp_packet.cpp; sourceTree = "<group>"; };
-		A262AA8E20EF931200FC1C99 /* h264_rtp_helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_rtp_helper.cpp; sourceTree = "<group>"; };
-		A262AA8F20EF931200FC1C99 /* h264_rtp_packet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = h264_rtp_packet.hpp; sourceTree = "<group>"; };
-		A262AA9020EF931200FC1C99 /* h264_rtp_helper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = h264_rtp_helper.hpp; sourceTree = "<group>"; };
-		A262AA9120EF931200FC1C99 /* rtcp_packet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtcp_packet.cpp; sourceTree = "<group>"; };
-		A262AA9220EF931200FC1C99 /* h264_rtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = h264_rtp.h; sourceTree = "<group>"; };
+		A2DAE52A212E933200784D7F /* rtcp_packet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rtcp_packet.hpp; sourceTree = "<group>"; };
+		A2DAE52B212E933200784D7F /* rtp_session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_session.cpp; sourceTree = "<group>"; };
+		A2DAE52C212E933200784D7F /* h264_rtp_packet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_rtp_packet.cpp; sourceTree = "<group>"; };
+		A2DAE52D212E933200784D7F /* h264_rtp_helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_rtp_helper.cpp; sourceTree = "<group>"; };
+		A2DAE52E212E933200784D7F /* h264_rtp_packet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = h264_rtp_packet.hpp; sourceTree = "<group>"; };
+		A2DAE52F212E933200784D7F /* h264_rtp_helper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = h264_rtp_helper.hpp; sourceTree = "<group>"; };
+		A2DAE530212E933200784D7F /* rtcp_packet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtcp_packet.cpp; sourceTree = "<group>"; };
+		A2DAE531212E933200784D7F /* h264_rtp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = h264_rtp.h; sourceTree = "<group>"; };
+		A2DAE532212E933200784D7F /* rtp_session.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = rtp_session.hpp; sourceTree = "<group>"; };
+		A2DAE53B212E934300784D7F /* srtc_log.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = srtc_log.hpp; sourceTree = "<group>"; };
+		A2DAE53C212E934300784D7F /* base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base.cpp; sourceTree = "<group>"; };
+		A2DAE53D212E934300784D7F /* base.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = base.hpp; sourceTree = "<group>"; };
+		A2DAE53E212E934300784D7F /* srtc_log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = srtc_log.cpp; sourceTree = "<group>"; };
+		A2DAE543212E934C00784D7F /* transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = transport.cpp; sourceTree = "<group>"; };
+		A2DAE544212E934C00784D7F /* transport.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = transport.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +82,9 @@
 		A228BB2220E4C94A003D8AAD /* SRTC_SERVER */ = {
 			isa = PBXGroup;
 			children = (
-				A262AA8B20EF931200FC1C99 /* rtp_rtcp */,
+				A2DAE542212E934C00784D7F /* transport */,
+				A2DAE53A212E934300784D7F /* base */,
+				A2DAE529212E933200784D7F /* rtp_rtcp */,
 				A228BB2320E4C94A003D8AAD /* main.cpp */,
 				A228BB2A20E4E14A003D8AAD /* dump2file.cpp */,
 				A228BB2B20E4E14B003D8AAD /* dump2file.hpp */,
@@ -78,19 +92,43 @@
 			path = SRTC_SERVER;
 			sourceTree = "<group>";
 		};
-		A262AA8B20EF931200FC1C99 /* rtp_rtcp */ = {
+		A2DAE529212E933200784D7F /* rtp_rtcp */ = {
 			isa = PBXGroup;
 			children = (
-				A262AA8C20EF931200FC1C99 /* rtcp_packet.hpp */,
-				A262AA8D20EF931200FC1C99 /* h264_rtp_packet.cpp */,
-				A262AA8E20EF931200FC1C99 /* h264_rtp_helper.cpp */,
-				A262AA8F20EF931200FC1C99 /* h264_rtp_packet.hpp */,
-				A262AA9020EF931200FC1C99 /* h264_rtp_helper.hpp */,
-				A262AA9120EF931200FC1C99 /* rtcp_packet.cpp */,
-				A262AA9220EF931200FC1C99 /* h264_rtp.h */,
+				A2DAE52A212E933200784D7F /* rtcp_packet.hpp */,
+				A2DAE52B212E933200784D7F /* rtp_session.cpp */,
+				A2DAE52C212E933200784D7F /* h264_rtp_packet.cpp */,
+				A2DAE52D212E933200784D7F /* h264_rtp_helper.cpp */,
+				A2DAE52E212E933200784D7F /* h264_rtp_packet.hpp */,
+				A2DAE52F212E933200784D7F /* h264_rtp_helper.hpp */,
+				A2DAE530212E933200784D7F /* rtcp_packet.cpp */,
+				A2DAE531212E933200784D7F /* h264_rtp.h */,
+				A2DAE532212E933200784D7F /* rtp_session.hpp */,
 			);
 			name = rtp_rtcp;
 			path = ../../SRTC/SRTC/rtp_rtcp;
+			sourceTree = "<group>";
+		};
+		A2DAE53A212E934300784D7F /* base */ = {
+			isa = PBXGroup;
+			children = (
+				A2DAE53B212E934300784D7F /* srtc_log.hpp */,
+				A2DAE53C212E934300784D7F /* base.cpp */,
+				A2DAE53D212E934300784D7F /* base.hpp */,
+				A2DAE53E212E934300784D7F /* srtc_log.cpp */,
+			);
+			name = base;
+			path = ../../SRTC/SRTC/base;
+			sourceTree = "<group>";
+		};
+		A2DAE542212E934C00784D7F /* transport */ = {
+			isa = PBXGroup;
+			children = (
+				A2DAE543212E934C00784D7F /* transport.cpp */,
+				A2DAE544212E934C00784D7F /* transport.hpp */,
+			);
+			name = transport;
+			path = ../../SRTC/SRTC/transport;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,10 +187,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A262AA9420EF931200FC1C99 /* h264_rtp_helper.cpp in Sources */,
+				A2DAE541212E934300784D7F /* srtc_log.cpp in Sources */,
+				A2DAE536212E933200784D7F /* rtcp_packet.cpp in Sources */,
+				A2DAE534212E933200784D7F /* h264_rtp_packet.cpp in Sources */,
+				A2DAE545212E934C00784D7F /* transport.cpp in Sources */,
 				A228BB2C20E4E14B003D8AAD /* dump2file.cpp in Sources */,
-				A262AA9520EF931200FC1C99 /* rtcp_packet.cpp in Sources */,
-				A262AA9320EF931200FC1C99 /* h264_rtp_packet.cpp in Sources */,
+				A2DAE533212E933200784D7F /* rtp_session.cpp in Sources */,
+				A2DAE540212E934300784D7F /* base.cpp in Sources */,
+				A2DAE535212E933200784D7F /* h264_rtp_helper.cpp in Sources */,
 				A228BB2420E4C94A003D8AAD /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +316,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8JW82U8D6W;
+				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/thirdparty/openh264;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -283,6 +326,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8JW82U8D6W;
+				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/thirdparty/openh264;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

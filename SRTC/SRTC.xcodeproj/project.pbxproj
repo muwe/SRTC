@@ -16,6 +16,7 @@
 		A262AA7C20EE3BC700FC1C99 /* srtc_log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA7A20EE3BC700FC1C99 /* srtc_log.cpp */; };
 		A262AA8620EF551C00FC1C99 /* rtcp_packet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA8420EF551C00FC1C99 /* rtcp_packet.cpp */; };
 		A262AA8920EF906F00FC1C99 /* h264_rtp_helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA8720EF906F00FC1C99 /* h264_rtp_helper.cpp */; };
+		A262AA9820F351A400FC1C99 /* rtp_session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A262AA9620F351A400FC1C99 /* rtp_session.cpp */; };
 		A2DE237020EC917F000CE6D5 /* transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DE236520EC917F000CE6D5 /* transport.cpp */; };
 		A2DE237120EC917F000CE6D5 /* h264_encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DE236820EC917F000CE6D5 /* h264_encode.cpp */; };
 		A2DE237320EC917F000CE6D5 /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2DE236E20EC917F000CE6D5 /* base.cpp */; };
@@ -49,6 +50,8 @@
 		A262AA8520EF551C00FC1C99 /* rtcp_packet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = rtcp_packet.hpp; sourceTree = "<group>"; };
 		A262AA8720EF906F00FC1C99 /* h264_rtp_helper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = h264_rtp_helper.cpp; sourceTree = "<group>"; };
 		A262AA8820EF906F00FC1C99 /* h264_rtp_helper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = h264_rtp_helper.hpp; sourceTree = "<group>"; };
+		A262AA9620F351A400FC1C99 /* rtp_session.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_session.cpp; sourceTree = "<group>"; };
+		A262AA9720F351A400FC1C99 /* rtp_session.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = rtp_session.hpp; sourceTree = "<group>"; };
 		A2DE236520EC917F000CE6D5 /* transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = transport.cpp; sourceTree = "<group>"; };
 		A2DE236620EC917F000CE6D5 /* transport.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = transport.hpp; sourceTree = "<group>"; };
 		A2DE236820EC917F000CE6D5 /* h264_encode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = h264_encode.cpp; sourceTree = "<group>"; };
@@ -145,6 +148,8 @@
 				A2DE237A20EC921E000CE6D5 /* h264_rtp.h */,
 				A262AA8420EF551C00FC1C99 /* rtcp_packet.cpp */,
 				A262AA8520EF551C00FC1C99 /* rtcp_packet.hpp */,
+				A262AA9620F351A400FC1C99 /* rtp_session.cpp */,
+				A262AA9720F351A400FC1C99 /* rtp_session.hpp */,
 			);
 			path = rtp_rtcp;
 			sourceTree = "<group>";
@@ -225,6 +230,7 @@
 				A228BB1320E4965D003D8AAD /* dump2file.cpp in Sources */,
 				A262AA8920EF906F00FC1C99 /* h264_rtp_helper.cpp in Sources */,
 				A2DE237620EC91E0000CE6D5 /* h264_rtp_packet.cpp in Sources */,
+				A262AA9820F351A400FC1C99 /* rtp_session.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +351,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8JW82U8D6W;
-				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/openh264;
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/thirdparty/openh264;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -355,7 +362,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8JW82U8D6W;
-				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/openh264;
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /Users/aivensmac/work/study/thirdparty/openh264;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -30,7 +30,8 @@ public:
         dump_file_.reset(new DumpFile(outPutFile));
         transport_.reset(new Transport());
         
-        transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
+//        transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
+        transport_->Init(UDP, SERVER_ADDRESS, SERVER_PORT);
     }
     void OnRtpPacket(char* rtp, int length) override
     {
@@ -70,7 +71,6 @@ private:
     shared_ptr<H264RtpPacket> h264_rtp_;
     shared_ptr<RtpDump> rtp_dump_;
     shared_ptr<RtpSession> rtp_session_;
-
 };
 
 int main(int argc, const char * argv[]) {
