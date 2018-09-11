@@ -10,11 +10,146 @@
 #include <memory.h>
 #include <arpa/inet.h>
 #include "../base/srtc_log.hpp"
+#include "../base/base.hpp"
+
 
 using namespace SRTC;
 
+
 int RtcpPacket::Send_Packages()
 {
+    int ii;
+    int nn,nmid;
+    int fillzeronum;
+    int bsr,brr;
+    unsigned long tt1,tt2,tt3;
+    unsigned short onelen;
+    unsigned char* pbuf;
+    struct sockaddr_in to;
+    RTCP_PACKET* rtcp_pkt;
+    
+    // modified for multi thread by starhan
+    unsigned char rtcp_sbuff[RTCP_PACKET_MAX_SIZE+16];
+    
+    nn = 0;
+    pbuf = rtcp_sbuff;
+    
+    /* Judge need to send SR */
+    bsr = 0;
+    if( rtp_session_->sess_states.sentpacket > 0 )  bsr = 1;
+
+    /* Judge need to send RR information */
+//    brr = 0;
+//    if( stream_source_calc_recv_source(rtp_session_) > 0 ) brr = 1;
+
+    if( 0 == bsr && 0 == brr )
+    {
+        Send_Bye_Or_Emptyrr_Packet(rtp_session_,0);
+        return 0;
+    }
+
+    /* Creating SR or RR Packet */
+    
+    if( 1 == bsr )
+    {
+        rtcp_pkt = (RTCP_PACKET *)pbuf;
+        rtcp_pkt->common.ver = RTP_VERSION;
+        rtcp_pkt->common.pad = 0;
+        rtcp_pkt->common.pt = RTCP_TYPE_SR;
+        rtcp_pkt->report.sr.ssrc = htonl(rtp_session_->GetLocalSsrc());
+        if( Get_Curr_Ntp_Rtp_Time(rtp_session_,&tt1,&tt2,&tt3) < 0 )
+        {
+            SRTC_ERROR_LOG("rtcp get ntp time error\n");
+            return -1;
+        }
+        rtcp_pkt->report.sr.ntp_sec = htonl(tt1);
+        rtcp_pkt->report.sr.ntp_frac = htonl(tt2);
+        rtcp_pkt->report.sr.rtp_ts = htonl(tt3);
+        
+        rtcp_pkt->report.sr.psent = htonl(rtp_session_->sess_states.sentpacketall);
+        rtcp_pkt->report.sr.osent = htonl(rtp_session_->sess_states.sentbyteall);
+        
+        if( 1 == brr && (ii = Stream_Source_Calc_RR(rtp_session_,rtcp_pkt->report.sr.rr)) >0 )
+        {
+            rtcp_pkt->common.count = (unsigned)ii;
+            /* need to substract size of RTCP_PKT.sr.rr[0] */
+            onelen = sizeof(RTCP_COMMON_HEADER)+sizeof(rtcp_pkt->report.rr)+(ii-1)*sizeof(RTCP_RR);
+            rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+        }
+        else
+        {
+            rtcp_pkt->common.count = 0;
+            onelen = sizeof(RTCP_COMMON_HEADER)+sizeof(rtcp_pkt->report.rr)-sizeof(RTCP_RR);
+            rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+        }
+        
+    }
+    else /* RR type  */
+    {
+        rtcp_pkt = (RTCP_PACKET *)pbuf;
+        rtcp_pkt->common.ver = RTP_VERSION;
+        rtcp_pkt->common.pad = 0;
+        rtcp_pkt->common.pt = RTCP_TYPE_RR;
+        rtcp_pkt->report.rr.ssrc = htonl(rtp_session_->GetLocalSsrc());
+        
+        if( (ii = Stream_Source_Calc_RR(rtp_session_,rtcp_pkt->report.rr.rr)) >0 )
+        {
+            rtcp_pkt->common.count = (unsigned)ii;
+            onelen = sizeof(RTCP_COMMON_HEADER)+4+ii*sizeof(RTCP_RR);
+            rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+        }
+        else
+        {
+            rtcp_pkt->common.count = 0;
+            onelen = sizeof(RTCP_COMMON_HEADER)+4;
+            rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+        }
+        
+    }
+    
+    nn += onelen;
+    pbuf += onelen;
+    
+    /* Add SDES packet */
+    
+    nmid = strlen(rtp_session_->spec);
+    fillzeronum = 4 - (nmid + 2)%4;
+    nmid = (nmid+2+4)/4*4;
+    
+    rtcp_pkt = (RTCP_PACKET *)pbuf;
+    rtcp_pkt->common.ver = RTP_VERSION;
+    rtcp_pkt->common.pad = 0;
+    rtcp_pkt->common.count = 1;
+    onelen = sizeof(RTCP_COMMON_HEADER)+4+nmid;
+    rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+    rtcp_pkt->common.pt = RTCP_TYPE_SDES;
+    
+    rtcp_pkt->report.sdes.ssrc = htonl(rtp_session_->GetLocalSsrc());
+    rtcp_pkt->report.sdes.item[0].type = RTCP_SDES_CNAME;
+    rtcp_pkt->report.sdes.item[0].length = strlen(rtp_session_->spec);
+    strcpy(rtcp_pkt->report.sdes.item[0].data,rtp_session_->spec);
+    
+    bzero(pbuf+onelen-fillzeronum,fillzeronum);
+    
+    nn += onelen;
+    pbuf += onelen;
+    
+//    /* send rtcp bye packet */
+//    bzero(&to,sizeof(struct sockaddr_in));
+//    to.sin_family = AF_INET;
+//    to.sin_addr.s_addr = htonl(psess->dstaddr);
+//    to.sin_port = htons(psess->dstports[1]);
+//
+//    if( sendto(psess->rtcpfd,rtcp_sbuff,nn,0,(struct sockaddr *)&to,sizeof(to)) < 0 )
+//    {
+//        DEBUG_RTP(("rtcp send bye packet error\n"));
+//        return -1;
+//    }
+    
+    
+    rtp_session_->sess_states.sentpacket = 0;
+    rtp_session_->sess_states.sentbyte = 0;
+    
     return 0;
 }
 
@@ -61,6 +196,96 @@ int RtcpPacket::Send_Bye_pkt()
 
 int RtcpPacket::Send_Single_Packet()
 {
+    return 0;
+}
+
+int RtcpPacket::Send_Bye_Or_Emptyrr_Packet(RtpSession* pSession,int bbyepkt)
+{
+    int nn,nmid;
+    int fillzeronum;
+    unsigned short onelen;
+    unsigned char* pbuf;
+    struct sockaddr_in to;
+    RTCP_PACKET* rtcp_pkt;
+    
+    // modified for multi thread by starhan
+    unsigned char rtcp_sbuff[RTCP_PACKET_MAX_SIZE+16];
+    
+    nn = 0;
+    pbuf = rtcp_sbuff;
+    
+    /* add RR packet*/
+    rtcp_pkt = (RTCP_PACKET *)pbuf;
+    rtcp_pkt->common.ver = RTP_VERSION;
+    rtcp_pkt->common.pad = 0;
+    rtcp_pkt->common.count = 0;
+    rtcp_pkt->common.pt = RTCP_TYPE_RR;
+    rtcp_pkt->report.rr.ssrc = htonl(pSession->GetLocalSsrc());
+    onelen = sizeof(RTCP_COMMON_HEADER) + 4;
+    rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+    
+    nn += onelen;
+    pbuf += onelen;
+    
+    /* add SDES packet */
+    
+    nmid = strlen(pSession->spec);
+    fillzeronum = 4 - (nmid + 2)%4;
+    nmid = (nmid+2+4)/4*4;
+    
+    rtcp_pkt = (RTCP_PACKET *)pbuf;
+    rtcp_pkt->common.ver = RTP_VERSION;
+    rtcp_pkt->common.pad = 0;
+    rtcp_pkt->common.count = 1;
+    onelen = sizeof(RTCP_COMMON_HEADER) + 4 + nmid;
+    rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+    rtcp_pkt->common.pt = RTCP_TYPE_SDES;
+    
+    rtcp_pkt->report.sdes.ssrc = htonl(pSession->GetLocalSsrc());
+    rtcp_pkt->report.sdes.item[0].type = RTCP_SDES_CNAME;
+    rtcp_pkt->report.sdes.item[0].length = strlen(pSession->spec);
+    strcpy(rtcp_pkt->report.sdes.item[0].data,pSession->spec);
+    
+    bzero(pbuf+onelen-fillzeronum,fillzeronum);
+    
+    nn += onelen;
+    pbuf += onelen;
+    
+    /* add BYE packet */
+    if( 1 == bbyepkt )
+    {
+        rtcp_pkt = (RTCP_PACKET *)pbuf;
+        rtcp_pkt->common.ver = RTP_VERSION;
+        rtcp_pkt->common.pad = 0;
+        rtcp_pkt->common.count = 1;
+        onelen = sizeof(RTCP_COMMON_HEADER) + 4;;
+        rtcp_pkt->common.length = htons((unsigned short)(onelen/4-1));
+        rtcp_pkt->common.pt = RTCP_TYPE_BYE;
+        
+        rtcp_pkt->report.bye.ssrc[0] = htonl(pSession->GetLocalSsrc());
+        
+        nn += onelen;
+    }
+    
+    //    /* send rtcp  packet */
+    //    bzero(&to,sizeof(struct sockaddr_in));
+    //    to.sin_family = AF_INET;
+    //    to.sin_addr.s_addr = htonl(psess->dstaddr);
+    //    to.sin_port = htons(psess->dstports[1]);
+    //
+    //    if( sendto(psess->rtcpfd,rtcp_sbuff,nn,0,(struct sockaddr *)&to,sizeof(to)) < 0 )
+    //    {
+    //        if( 1 == bbyepkt )
+    //        {
+    //            DEBUG_RTP(("rtcp send bye packet error\n"));
+    //        }
+    //        else
+    //        {
+    //            DEBUG_RTP(("rtcp send empty rr packet error\n"));
+    //        }
+    //        return -1;
+    //    }
+    
     return 0;
 }
 
@@ -205,94 +430,293 @@ int RtcpPacket::Parse_Sr_Packet(unsigned char * pkt)
 {
     int ii;
     RTCP_PACKET * rtcp_pkt;
-    struct STREAM_SOURCE* pstream;
+    StreamSource* pstream;
     PACKET_INFOS pinfo;
+    struct RTP_SESSION* psess = NULL;
+
+    if( NULL == pkt )
+    {
+        printf("rtcp pkt SR parse paramter error\n");
+        return -1;
+    }
     
-//    if( NULL == pkt )
-//    {
-//        printf("rtcp pkt SR parse paramter error\n");
-//        return -1;
-//    }
-//    
-//    rtcp_pkt = (RTCP_PACKET *)pkt;
+    rtcp_pkt = (RTCP_PACKET *)pkt;
 //    if( unicast == psess->delivery )
-//    {
-//        pstream = psess->pstream_source;
-//        if( NULL == pstream || rtcp_pkt->r.sr.ssrc != pstream->ssrc )
-//        {
-//            printf("rtcp unicast sr dealing ssrc error\n");
-//            return -1;
-//        }
-//        
-//        /* record sr infomation */
-//        pstream->ssrc_states.brecvsr++;
-//        rtprtcp_get_curr_time(&(pstream->ssrc_states.lastsr));
-//        pstream->ssrc_states.ntp_lastsr[0] = ntohl(rtcp_pkt->r.sr.ntp_sec);
-//        pstream->ssrc_states.ntp_lastsr[1] = ntohl(rtcp_pkt->r.sr.ntp_frac);
-//        
-//        DEBUG_RTP(("recv sr pakcet sent = %d", ntohl(rtcp_pkt->r.sr.psent)));
-//        
-//        /* dealing rr information */
-//        if( 1 == rtcp_pkt->common.count && psess->local_ssrc == ntohl(rtcp_pkt->r.sr.rr[0].ssrc) )
-//        {
-//            /* Record information */
-//            printf("rtcp unicast sr dealing rr lost pkt = %d ",ntohl24(rtcp_pkt->r.sr.rr[0].lost));
-//        }
-//        
-//        memset(&pinfo,0,sizeof(PACKET_INFOS));
-//        pinfo.type = PKT_RCV_RTCP;
-//        pinfo.rtpsess = psess;
-//        pinfo.fraction = rtcp_pkt->r.sr.rr[0].fraction;
+    {
+//        pstream =rtp_session_->stream_source_list;
+        pstream = rtp_session_->pstream_source;
+        
+        if( NULL == pstream || rtcp_pkt->report.sr.ssrc != pstream->GetSsrc() )
+        {
+            printf("rtcp unicast sr dealing ssrc error\n");
+            return -1;
+        }
+        
+        /* record sr infomation */
+        pstream->GetSsrcStates()->brecvsr++;
+        Get_Curr_Time(&(pstream->GetSsrcStates()->lastsr));
+        pstream->GetSsrcStates()->ntp_lastsr[0] = ntohl(rtcp_pkt->report.sr.ntp_sec);
+        pstream->GetSsrcStates()->ntp_lastsr[1] = ntohl(rtcp_pkt->report.sr.ntp_frac);
+        
+        SRTC_INFO_LOG("recv sr pakcet sent = %d", ntohl(rtcp_pkt->report.sr.psent));
+        
+        /* dealing rr information */
+        if( 1 == rtcp_pkt->common.count && rtp_session_->GetLocalSsrc() == ntohl(rtcp_pkt->report.sr.rr[0].ssrc) )
+        {
+            /* Record information */
+//            SRTC_INFO_LOG("rtcp unicast sr dealing rr lost pkt = %d ",ntohl24(rtcp_pkt->report.sr.rr[0].lost));
+        }
+        
+        memset(&pinfo,0,sizeof(PACKET_INFOS));
+        pinfo.type = PKT_RCV_RTCP;
+        pinfo.rtp_session = rtp_session_;
+        pinfo.fraction = rtcp_pkt->report.sr.rr[0].fraction;
 //        if(g_rtp_callback.process_pkt)
 //            g_rtp_callback.process_pkt(&pinfo);
-//        
-//    }
-//    else /* dealing multicast */
-//    {
-//        pstream = rtp_stream_source_match_ssrc(psess,rtcp_pkt->r.sr.ssrc);
-//        if( pstream != NULL )
-//        {
-//            /* record information*/
-//            pstream->ssrc_states.brecvsr ++;
-//            rtprtcp_get_curr_time(&(pstream->ssrc_states.lastsr));
-//            pstream->ssrc_states.ntp_lastsr[0] = ntohl(rtcp_pkt->r.sr.ntp_sec);
-//            pstream->ssrc_states.ntp_lastsr[1] = ntohl(rtcp_pkt->r.sr.ntp_frac);
-//            
-//            DEBUG_RTP(("rtcp multicast sr dealing sr \n"));
-//        }
-//        else
-//        {
-//            DEBUG_RTP(("rtcp multicast sr no dealing sr \n"));
-//        }
-//        
-//        /* dealing rr information */
-//        
-//        for( ii = 0 ; (unsigned)ii < rtcp_pkt->common.count ; ii++ )
-//        {
-//            if( psess->local_ssrc == ntohl(rtcp_pkt->r.sr.rr[0].ssrc) )
-//            {
-//                /* record information*/
-//                
-//                DEBUG_RTP(("rtcp multicast sr dealing rr \n"));
-//                break;
-//            }
-//        }
-//    }
-
+        
+    }
+#if 0
+    else /* dealing multicast */
+    {
+        pstream = rtp_stream_source_match_ssrc(psess,rtcp_pkt->report.sr.ssrc);
+        if( pstream != NULL )
+        {
+            /* record information*/
+            pstream->ssrc_states.brecvsr ++;
+            rtprtcp_get_curr_time(&(pstream->ssrc_states.lastsr));
+            pstream->ssrc_states.ntp_lastsr[0] = ntohl(rtcp_pkt->report.sr.ntp_sec);
+            pstream->ssrc_states.ntp_lastsr[1] = ntohl(rtcp_pkt->report.sr.ntp_frac);
+            
+            DEBUG_RTP(("rtcp multicast sr dealing sr \n"));
+        }
+        else
+        {
+            DEBUG_RTP(("rtcp multicast sr no dealing sr \n"));
+        }
+        
+        /* dealing rr information */
+        
+        for( ii = 0 ; (unsigned)ii < rtcp_pkt->common.count ; ii++ )
+        {
+            if( psess->local_ssrc == ntohl(rtcp_pkt->report.sr.rr[0].ssrc) )
+            {
+                /* record information*/
+                
+                SRTC_ERROR_LOG("rtcp multicast sr dealing rr.");
+                break;
+            }
+        }
+    }
+#endif
     return 0;
 }
 
 int RtcpPacket::Parse_Rr_Packet(unsigned char * pkt)
 {
+    int ii;
+    RTCP_PACKET * rtcp_pkt;
+    
+    if( NULL == pkt )
+    {
+        SRTC_ERROR_LOG("rtcp pkt parse RR paramter error");
+        return -1;
+    }
+    
+    rtcp_pkt = (RTCP_PACKET *)pkt;
+//    if( unicast == rtp_session_->delivery )
+    {
+        /* dealing rr information */
+        if( 1 == rtcp_pkt->common.count && rtp_session_->GetLocalSsrc() == ntohl(rtcp_pkt->report.rr.rr[0].ssrc) )
+        {
+            /* Record information */
+            SRTC_ERROR_LOG("rtcp unicast rr dealing rr.");
+        }
+    }
+#if 0
+    else /* dealing multicast */
+    {
+        /* dealing rr information */
+        for( ii = 0 ; (unsigned) ii < rtcp_pkt->common.count ; ii++ )
+        {
+            if( psess->local_ssrc == ntohl(rtcp_pkt->r.rr.rr[0].ssrc) )
+            {
+                /* record information*/
+                DEBUG_RTP(("rtcp multicast sr dealing rr \n"));
+                break;
+            }
+        }
+    }
+#endif
+    
     return 0;
 }
 
 int RtcpPacket::Parse_Sdes_Packet(unsigned char * pkt)
 {
+    int nn;
+    int jj;
+    int nmid;
+    int minlen;
+    unsigned long *pssrc;
+    RTCP_SDES_ITEM* psdesitem;
+    StreamSource* pstream;
+    RTCP_PACKET * rtcp_pkt;
+    
+    if(NULL == pkt )
+    {
+        SRTC_ERROR_LOG("rtcp pkt sdes parse paramter error.");
+        return -1;
+    }
+    
+    rtcp_pkt = (RTCP_PACKET *)pkt;
+    
+    nn = sizeof(RTCP_COMMON_HEADER);
+    for( jj = 0 ; (unsigned)jj < rtcp_pkt->common.count; jj++)
+    {
+        pssrc = (unsigned long *)(pkt+nn);
+        nn += 4;
+        psdesitem = (RTCP_SDES_ITEM *)(pkt+nn);
+        
+        pstream = rtp_session_->pstream_source;
+//        pstream = rtp_stream_source_match_ssrc(rtp_session_,(unsigned long)(*pssrc));
+        
+        nmid = 0;
+        while(1)
+        {
+            psdesitem = (RTCP_SDES_ITEM *)(pkt+nn+nmid);
+            if( RTCP_SDES_END == psdesitem->type )
+                break;
+            
+            nmid += (psdesitem->length + 2);
+            /* error source
+             if( (nmid + sizeof(RTCP_COMMON_HEADER)+4) >= g_pkt_rtcp_combi[jj].len )
+             {
+             DLOG(RTCP_PKTSDESPARSE|0x01,LOGC_ERROR,"rtcp multicast sdes length error");
+             return -1;
+             }
+             */
+            if( pstream != NULL)
+            {
+                switch( psdesitem->type )
+                {
+                    case RTCP_SDES_CNAME:
+                        minlen=(RTCP_SDES_STR_MAX_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->cname,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->cname[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes cname %s\n",pstream->GetSsrcSdes()->cname);
+                        break;
+                    case RTCP_SDES_NAME:
+                        minlen=min(RTCP_SDES_STR_NAME_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->name,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->name[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes name %s\n",pstream->GetSsrcSdes()->name);
+                        break;
+                    case RTCP_SDES_EMAIL:
+                        minlen=min(RTCP_SDES_STR_EMAIL_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->email,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->email[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes email name %s\n",pstream->GetSsrcSdes()->email);
+                        break;
+                    case RTCP_SDES_PHONE:
+                        minlen=min(RTCP_SDES_STR_PHONE_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->phone,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->phone[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes phone %s\n",pstream->GetSsrcSdes()->phone);
+                        break;
+                    case RTCP_SDES_LOC:
+                        minlen=min(RTCP_SDES_STR_LOC_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->loc,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->loc[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes loc %s\n",pstream->GetSsrcSdes()->loc);
+                        break;
+                    case RTCP_SDES_TOOL:
+                        minlen=min(RTCP_SDES_STR_TOOL_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->tool,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->tool[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes tool %s\n",pstream->GetSsrcSdes()->tool);
+                        break;
+                    case RTCP_SDES_NOTE:
+                        minlen=min(RTCP_SDES_STR_NOTE_SIZE,psdesitem->length);
+                        memcpy(pstream->GetSsrcSdes()->note,psdesitem->data,minlen);
+                        pstream->GetSsrcSdes()->note[minlen] = '\0';
+                        SRTC_INFO_LOG("sdes note %s\n",pstream->GetSsrcSdes()->note);
+                        break;
+                }
+            }
+        }
+        
+        nn += (nmid+4)/4*4;
+    }
+    
     return 0;
+    
 }
 
 int RtcpPacket::Parse_Bye_Packet(unsigned char * pkt)
+{
+    int jj;
+    StreamSource* pstream;
+    RTCP_PACKET * rtcp_pkt;
+    
+    if( NULL == pkt )
+    {
+        SRTC_ERROR_LOG("rtcp pkt bye parse paramter error.");
+        return -1;
+    }
+    
+    rtcp_pkt = (RTCP_PACKET *)pkt;
+    
+    for( jj = 0 ; (unsigned)jj < rtcp_pkt->common.count; jj++)
+    {
+//        pstream = NULL;
+        pstream = rtp_session_->pstream_source;
+//        pstream = rtp_stream_source_match_ssrc(pkt,rtcp_pkt->report.bye.ssrc[jj]);
+        
+        if( pstream != NULL )
+        {
+//            rtp_stream_source_chain_del(pkt,pkt);
+        }
+    }
+    
+    return 0;
+}
+
+int RtcpPacket::Get_Curr_Ntp_Rtp_Time(RtpSession* pSession,unsigned long *phntpt,unsigned long *plntpt,unsigned long *prtpt)
+{
+    return 0;
+}
+
+int RtcpPacket::Get_Curr_Time(timeval *ptv)
+{
+#ifdef WIN32
+    struct _timeb timebuffer;
+#endif
+    
+    if( NULL == ptv )
+    {
+        SRTC_ERROR_LOG("rtp rtprtcp_get_curr_time parameter error.");
+        return -1;
+    }
+    
+#ifdef WIN32
+    _ftime( &timebuffer );
+    ptv->tv_sec = timebuffer.time;
+    ptv->tv_usec = timebuffer.millitm;
+#else
+    {
+        struct timeval now;
+        struct timezone tz;
+        
+        gettimeofday(&now, &tz);
+        ptv->tv_sec = now.tv_sec;
+        ptv->tv_usec = now.tv_usec;
+    }
+#endif
+    return 0;
+}
+
+
+int RtcpPacket::Stream_Source_Calc_RR(RtpSession* pSession,RTCP_RR *prr)
 {
     return 0;
 }

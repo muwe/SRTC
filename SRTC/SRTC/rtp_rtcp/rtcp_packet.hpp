@@ -25,10 +25,15 @@ namespace SRTC {
         int len;    /* the length of this rtcp packet */
     };
 
+#define  PKT_SND_MPEG4     1
+#define  PKT_SND_H263      2
+#define  PKT_RCV_RTCP      3
+#define  PKT_RCV_RFC2833    4
+
     struct PACKET_INFOS
     {
         unsigned type;       /*packet type such as PKT_RCV_RFC2833 PKT_RCV_RTCP */
-//        rtp_session *rtpsess;
+        RtpSession *rtp_session;
         unsigned fraction;         /*  fraction lost since last SR/RR */
         unsigned char* event;/*dtmf*/
     };
@@ -43,13 +48,19 @@ namespace SRTC {
     private:
         int Send_Bye_pkt();
         int Send_Single_Packet();
-        
+        int Send_Bye_Or_Emptyrr_Packet(RtpSession* pSession,int bbyepkt);
+
         int Check_Rtcp_Packet(unsigned char * pkt, int len);
         int Parse_Rtcp_Packet(unsigned char * pkt, int len);
         int Parse_Sr_Packet(unsigned char * pkt);
         int Parse_Rr_Packet(unsigned char * pkt);
         int Parse_Sdes_Packet(unsigned char * pkt);
         int Parse_Bye_Packet(unsigned char * pkt);
+
+        int Get_Curr_Time(timeval *ptv);
+        int Get_Curr_Ntp_Rtp_Time(RtpSession* pSession,unsigned long *phntpt,unsigned long *plntpt,unsigned long *prtpt);
+        int Stream_Source_Calc_RR(RtpSession* pSession,RTCP_RR *prr);
+        
     private:
         COMBI_RTCP_INFO pkt_rtcp_combi_[RTCP_COMBINATION_MAX_COUNT];
         RtpSession* rtp_session_{nullptr};

@@ -7,5 +7,12 @@
 //
 
 #include "rtp_session.hpp"
+#include "../base/srtc_log.hpp"
 
+using namespace SRTC;
 
+unsigned long RtpSession:: GetLocalSsrc()
+{
+    SRTC_INFO_LOG("GetLocalSsrc");
+    return local_ssrc;
+}

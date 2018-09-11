@@ -11,7 +11,12 @@
 
 #include <stdio.h>
 
+typedef unsigned int uint;
+
 int64_t GetSystemTime();
 void Sleep(int time);
+
+#define max(a,b) a>b ？a:b
+#define min(a,b) a>b ? b:a
 
 #endif /* base_hpp */

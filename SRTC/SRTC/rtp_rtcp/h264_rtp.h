@@ -6,8 +6,11 @@
 //  Copyright © 2018年 Aiven's Mac. All rights reserved.
 //
 
+
+
 #ifndef h264_rtp_h
 #define h264_rtp_h
+
 
 
 #define H264  96
@@ -86,6 +89,19 @@ namespace SRTC {
         RTCP_TYPE_APP  = 204
     } ;
 
+    enum RTCP_SDES_TYPE
+    {
+        RTCP_SDES_END   = 0,
+        RTCP_SDES_CNAME = 1,
+        RTCP_SDES_NAME  = 2,
+        RTCP_SDES_EMAIL = 3,
+        RTCP_SDES_PHONE = 4,
+        RTCP_SDES_LOC   = 5,
+        RTCP_SDES_TOOL  = 6,
+        RTCP_SDES_NOTE  = 7,
+        RTCP_SDES_PRIV  = 8
+    };
+
     
     struct RTCP_COMMON_HEADER
     {
@@ -97,11 +113,20 @@ namespace SRTC {
         int length:16;     /* pkt len in words, w/o this word */
     };
     
-    struct RTCP_RR{
-        unsigned char type;              /* type of item (rtcp_sdes_type_t) */
-        unsigned char length;            /* length of item (in octets) */
-        char data[1];             /* text, not null-terminated */
-    };
+    /*
+     RTCP Reception report block
+     */
+    struct RTCP_RR
+    {
+        unsigned long ssrc;             /* data source being reported */
+        unsigned long fraction:8;       /* fraction lost since last SR/RR */
+        int lost:24;                    /* cumul. no. pkts lost (signed!) */
+        unsigned long last_seq;         /* extended last seq. no. received */
+        unsigned long jitter;           /* interarrival jitter */
+        unsigned long lsr;                 /* last SR packet from this source */
+        unsigned long dlsr;             /* delay since last SR packet */
+    } ;
+
     
     struct RTCP_SDES_ITEM
     {
@@ -147,7 +172,7 @@ namespace SRTC {
                 int ssrc[1];   /* list of sources */
                 /* can't express trailing text for reason */
             } bye;
-        } body;
+        } report;
     };
 
     
