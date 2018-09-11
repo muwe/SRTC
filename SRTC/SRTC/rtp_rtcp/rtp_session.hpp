@@ -55,8 +55,8 @@ namespace SRTC {
         char spec[RTP_SESSION_SPEC_SIZE+1] = {0};
     private:
         unsigned long     local_ssrc;     /* host byte order */;
-        int     rtpfd;
-        int     rtcpfd;
+//        int     rtpfd;
+//        int     rtcpfd;
         int     rtp4who;
         int     payloadtype;
 

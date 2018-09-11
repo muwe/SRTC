@@ -10,6 +10,8 @@
 #include "dump2file.hpp"
 #include "transport/transport.hpp"
 #include "rtp_rtcp/h264_rtp_packet.hpp"
+#include "rtp_rtcp/rtcp_packet.hpp"
+#include "rtp_rtcp/rtp_session.hpp"
 #include "codec/h264_encode.hpp"
 #include "base/srtc_log.hpp"
 
@@ -54,6 +56,7 @@ public:
         rtp_session_.reset(new RtpSession());
         
         h264_rtp_.reset(new H264RtpPacket(rtp_dump_.get(), nullptr, rtp_session_.get()));
+        rtcp_.reset(new RtcpPacket(rtp_session_.get()));
         
 //        transport_->Init(TCP, SERVER_ADDRESS, SERVER_PORT);
     }
@@ -64,11 +67,17 @@ public:
 //        transport_->Send(data, length);
         
         h264_rtp_->ReceiveH264Packet(data, length);
+        if(rtp_packet_count%100 == 0){
+            rtcp_->Send_Packages();
+            rtp_packet_count++;
+        }
     }
 private:
     shared_ptr<DumpFile> dump_file_;
 //    shared_ptr<Transport> transport_;
     shared_ptr<H264RtpPacket> h264_rtp_;
+    shared_ptr<RtcpPacket> rtcp_;
+    int rtp_packet_count{0};
     shared_ptr<RtpDump> rtp_dump_;
     shared_ptr<RtpSession> rtp_session_;
 };

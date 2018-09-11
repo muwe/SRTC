@@ -15,6 +15,11 @@
 
 using namespace SRTC;
 
+RtcpPacket::RtcpPacket(RtpSession* rtp_session)
+:rtp_session_(rtp_session)
+{
+    
+}
 
 int RtcpPacket::Send_Packages()
 {

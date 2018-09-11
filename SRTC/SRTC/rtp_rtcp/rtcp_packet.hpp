@@ -41,7 +41,7 @@ namespace SRTC {
     class RtcpPacket{
     public:
         RtcpPacket(RtpSession* rtp_session);
-        virtual ~RtcpPacket();
+        virtual ~RtcpPacket(){};
         
         int Send_Packages();
         int Receive_Package(unsigned char * pkt, int len);
@@ -67,8 +67,5 @@ namespace SRTC {
     };
     
 }
-
-
-
 
 #endif /* rtcp_packet_hpp */
