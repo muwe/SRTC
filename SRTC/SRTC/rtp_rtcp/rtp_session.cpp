@@ -11,8 +11,22 @@
 
 using namespace SRTC;
 
+RtpSession::RtpSession()
+{
+//    local_ssrc_ = rtp_ramdom32(0,fdrtp,fdrtcp);
+
+}
+
 unsigned long RtpSession:: GetLocalSsrc()
 {
     SRTC_INFO_LOG("GetLocalSsrc");
-    return local_ssrc;
+    return local_ssrc_;
+}
+
+
+SESSION_STATES* RtpSession:: GetSessionStates()
+{
+    SRTC_INFO_LOG("GetSessionStates");
+
+    return &sess_states_;
 }

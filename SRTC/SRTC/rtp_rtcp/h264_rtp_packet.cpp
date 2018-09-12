@@ -21,6 +21,8 @@ H264RtpPacket::H264RtpPacket(RtpReveiver* rtp_receiver, H264Receiver* h264_recei
     h264_receiver_ = h264_receiver;
     h264_buffer_ = nullptr;
     h264_buffer_length_ = 0;
+    
+    rtp_session_ = rtp_session;
 }
 
 H264RtpPacket::~H264RtpPacket()
@@ -204,6 +206,15 @@ int H264RtpPacket::ReceiveH264Packet(const unsigned char* buffer, int length)
             
             //    Sleep(100);
             
+            
+            rtp_session_->rtptimestamp = rtp_hdr->timestamp;
+            rtp_session_->GetSessionStates()->sentpacket++;
+            rtp_session_->GetSessionStates()->sentbyte += length;
+            // calculate the rtp packets
+            rtp_session_->GetSessionStates()->sentpacketall++;
+            rtp_session_->GetSessionStates()->sentbyteall += length;
+
+            
         }
         else if(n->len > 1400)  //这里就要分成多个RTP包发送了。
         {
@@ -313,6 +324,14 @@ int H264RtpPacket::ReceiveH264Packet(const unsigned char* buffer, int length)
                            fu_hdr->S, fu_hdr->R, fu_hdr->E, fu_hdr->TYPE, bytes, ntohs(rtp_hdr->seq_no));
                     t++;
                 }
+                
+                rtp_session_->rtptimestamp = rtp_hdr->timestamp;
+                rtp_session_->GetSessionStates()->sentpacket++;
+                rtp_session_->GetSessionStates()->sentbyte += length;
+                // calculate the rtp packets
+                rtp_session_->GetSessionStates()->sentpacketall++;
+                rtp_session_->GetSessionStates()->sentbyteall += length;
+
             }
         }
     }

@@ -58,7 +58,7 @@ namespace SRTC {
         int Parse_Bye_Packet(unsigned char * pkt);
 
         int Get_Curr_Time(timeval *ptv);
-        int Get_Curr_Ntp_Rtp_Time(RtpSession* pSession,unsigned long *phntpt,unsigned long *plntpt,unsigned long *prtpt);
+        int Get_Curr_Ntp_Rtp_Time(RtpSession* pSession,unsigned long &hntpt,unsigned long &lntpt,unsigned long &rtpt);
         int Stream_Source_Calc_RR(RtpSession* pSession,RTCP_RR *prr);
         
     private:

@@ -41,7 +41,7 @@ int RtcpPacket::Send_Packages()
     
     /* Judge need to send SR */
     bsr = 0;
-    if( rtp_session_->sess_states.sentpacket > 0 )  bsr = 1;
+    if( rtp_session_->GetSessionStates()->sentpacket > 0 )  bsr = 1;
 
     /* Judge need to send RR information */
 //    brr = 0;
@@ -62,7 +62,7 @@ int RtcpPacket::Send_Packages()
         rtcp_pkt->common.pad = 0;
         rtcp_pkt->common.pt = RTCP_TYPE_SR;
         rtcp_pkt->report.sr.ssrc = htonl(rtp_session_->GetLocalSsrc());
-        if( Get_Curr_Ntp_Rtp_Time(rtp_session_,&tt1,&tt2,&tt3) < 0 )
+        if( Get_Curr_Ntp_Rtp_Time(rtp_session_,tt1,tt2,tt3) < 0 )
         {
             SRTC_ERROR_LOG("rtcp get ntp time error\n");
             return -1;
@@ -71,8 +71,8 @@ int RtcpPacket::Send_Packages()
         rtcp_pkt->report.sr.ntp_frac = htonl(tt2);
         rtcp_pkt->report.sr.rtp_ts = htonl(tt3);
         
-        rtcp_pkt->report.sr.psent = htonl(rtp_session_->sess_states.sentpacketall);
-        rtcp_pkt->report.sr.osent = htonl(rtp_session_->sess_states.sentbyteall);
+        rtcp_pkt->report.sr.psent = htonl(rtp_session_->GetSessionStates()->sentpacketall);
+        rtcp_pkt->report.sr.osent = htonl(rtp_session_->GetSessionStates()->sentbyteall);
         
         if( 1 == brr && (ii = Stream_Source_Calc_RR(rtp_session_,rtcp_pkt->report.sr.rr)) >0 )
         {
@@ -152,8 +152,8 @@ int RtcpPacket::Send_Packages()
 //    }
     
     
-    rtp_session_->sess_states.sentpacket = 0;
-    rtp_session_->sess_states.sentbyte = 0;
+    rtp_session_->GetSessionStates()->sentpacket = 0;
+    rtp_session_->GetSessionStates()->sentbyte = 0;
     
     return 0;
 }
@@ -686,8 +686,44 @@ int RtcpPacket::Parse_Bye_Packet(unsigned char * pkt)
     return 0;
 }
 
-int RtcpPacket::Get_Curr_Ntp_Rtp_Time(RtpSession* pSession,unsigned long *phntpt,unsigned long *plntpt,unsigned long *prtpt)
+int RtcpPacket::Get_Curr_Ntp_Rtp_Time(RtpSession* pSession,unsigned long &hntpt,unsigned long &lntpt,unsigned long &rtpt)
 {
+    
+    unsigned long lmid;
+#ifdef WIN32
+    struct _timeb timebuffer;
+#endif
+    
+    if( NULL == pSession )
+    {
+        SRTC_ERROR_LOG("rtcp_get_curr_ntp_rtp_time parameter error.");
+        return -1;
+    }
+    
+#ifdef WIN32
+    _ftime( &timebuffer );
+    *phntpt = timebuffer.time;
+    
+    lmid = (unsigned long)(timebuffer.millitm);
+    lmid = (lmid*0x10000/1000)<<16;
+    
+    *plntpt = lmid;
+    *prtpt = psess->ttime+0x20;
+#else
+    {
+        struct timeval now;
+        struct timezone tz;
+        
+        gettimeofday(&now, &tz);
+        
+        hntpt = now.tv_sec;
+        lmid = (unsigned long)(now.tv_usec);
+        lmid = (lmid/(1000000/0x10000))<<16;    /* usec -> 1/0x10000 sec */
+        
+        lntpt = lmid;
+        rtpt = pSession->rtptimestamp;
+    }
+#endif
     return 0;
 }
 

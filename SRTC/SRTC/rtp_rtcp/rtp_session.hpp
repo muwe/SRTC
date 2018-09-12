@@ -47,14 +47,19 @@ namespace SRTC {
 
     class RtpSession{
     public:
+        RtpSession();
+        virtual ~RtpSession(){};
         unsigned long GetLocalSsrc();
+        SESSION_STATES* GetSessionStates();
         
-        SESSION_STATES sess_states;
+        
         StreamSource* pstream_source = nullptr;
 //        std::vector<std::shared_ptr<StreamSource>> stream_source_list;
         char spec[RTP_SESSION_SPEC_SIZE+1] = {0};
+        unsigned long rtptimestamp;
     private:
-        unsigned long     local_ssrc;     /* host byte order */;
+        SESSION_STATES sess_states_;
+        unsigned long     local_ssrc_;     /* host byte order */;
 //        int     rtpfd;
 //        int     rtcpfd;
         int     rtp4who;
